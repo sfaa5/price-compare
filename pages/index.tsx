@@ -1,7 +1,7 @@
 "use client"
 import { useState } from 'react';
 
-export default function Home() {
+export default function page() {
   const [q, setQ] = useState('');
   const [loading, setLoading] = useState(false);
   type ScrapedItem = { site: string; title?: string; price?: string; error?: string };

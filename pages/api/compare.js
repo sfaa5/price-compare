@@ -101,45 +101,20 @@ export default async function handler(req, res) {
 
 async function scrapeNoon() {
   try {
-    const browser = await chromium.launch({
-      headless: true, // 👀 جرب مرئي الأول
-      slowMo: 50,
-      args: [
-        "--disable-blink-features=AutomationControlled",
-        "--no-sandbox",
-        "--disable-setuid-sandbox",
-        "--disable-http2"
-      ]
-    });
+  const browser = await chromium.launch({ headless: true }); // can be true now
+  const page = await browser.newPage();
 
-    const context = await browser.newContext({
-      userAgent:
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-      viewport: { width: 1366, height: 768 },
-      locale: "en-US,en;q=0.9"
-    });
 
-    const page = await context.newPage();
 
-    await page.addInitScript(() => {
-      Object.defineProperty(navigator, 'webdriver', {
-        get: () => false,
-      });
-    });
 
     const url = `https://www.noon.com/egypt-en/search/?q=${encodeURIComponent(query)}`;
     console.log("🔎 Navigating to Noon:", url);
 
-    try {
-      await page.goto(url, { waitUntil: "networkidle", timeout: 120000  });
-    } catch (err) {
-      console.warn("⚠️ First goto failed:", err.message);
-      await page.goto(url, { waitUntil: "commit", timeout: 60000 });
-    }
+    await page.goto(url, { waitUntil: "domcontentloaded", timeout: 90000 });
 
-    await page.waitForSelector("div.ProductDetailsSection_wrapper__yLBrw", {
-      timeout: 20000
-    });
+    await page.waitForSelector('div.ProductDetailsSection_wrapper__yLBrw', { timeout: 60000 });
+
+    
 
     const card = (await page.$$("div.ProductDetailsSection_wrapper__yLBrw"))[0];
 
