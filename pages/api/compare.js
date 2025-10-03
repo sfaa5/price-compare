@@ -8,7 +8,7 @@ export default async function handler(req, res) {
 
   const { query } = req.body;
   if (!query || query.trim().length === 0) {
-    return res.status(400).json({ error: "query required" });
+    return res.status(400).json({ error: "query requiredd" });
   }
 
   const results = [];
